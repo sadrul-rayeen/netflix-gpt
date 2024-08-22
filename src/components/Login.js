@@ -1,30 +1,49 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "./Header";
+import { background_image_url } from "../utils/constant";
 
 const Login = () => {
+  const [isSignInForm, setIsSignInFrom] = useState(true);
+  const toggleSignInForm = () => {
+    setIsSignInFrom(!isSignInForm);
+  };
   return (
-    <div>
+    <div
+      className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: `url(${background_image_url})`,
+      }}
+    >
       <Header />
-      <div className="absolute">
-        <img
-          src="https://assets.nflxext.com/ffe/siteui/vlv3/031c42b9-0c81-4db5-b980-0160765188e9/27f1b15d-79ed-43ca-8982-7faa9e4aa388/IN-en-20240819-TRIFECTA-perspective_WEB_3c576fa6-cd23-46b6-ac3f-1ad2bb0f66fb_small.jpg"
-          srcset="https://assets.nflxext.com/ffe/siteui/vlv3/031c42b9-0c81-4db5-b980-0160765188e9/27f1b15d-79ed-43ca-8982-7faa9e4aa388/IN-en-20240819-TRIFECTA-perspective_WEB_3c576fa6-cd23-46b6-ac3f-1ad2bb0f66fb_small.jpg 1000w, https://assets.nflxext.com/ffe/siteui/vlv3/031c42b9-0c81-4db5-b980-0160765188e9/27f1b15d-79ed-43ca-8982-7faa9e4aa388/IN-en-20240819-TRIFECTA-perspective_WEB_3c576fa6-cd23-46b6-ac3f-1ad2bb0f66fb_medium.jpg 1500w, https://assets.nflxext.com/ffe/siteui/vlv3/031c42b9-0c81-4db5-b980-0160765188e9/27f1b15d-79ed-43ca-8982-7faa9e4aa388/IN-en-20240819-TRIFECTA-perspective_WEB_3c576fa6-cd23-46b6-ac3f-1ad2bb0f66fb_large.jpg"
-          alt="logo"
-        />
-      </div>
-      <form className="absolute p-12 w-3/12 bg-black my-36 mx-auto right-0 left-0 text-white">
-        <h1 className="font-bold text-3xl py-4">Sign In</h1>
+      <form className="absolute p-12 md:w-1/2 lg:w-1/3 xl:w-1/4 bg-black my-36 mx-auto right-0 left-0 text-white rounded-lg bg-opacity-80">
+        <h1 className="font-bold text-3xl py-4">
+          {isSignInForm ? "Sign In" : "Sign Up"}
+        </h1>
+        {!isSignInForm && (
+          <input
+            type="text"
+            placeholder="Full Name"
+            className="p-4 my-4 w-full bg-gray-700"
+          />
+        )}
         <input
           type="text"
           placeholder="Email Address"
-          className="p-2 my-2 w-full"
+          className="p-4 my-4 w-full bg-gray-700"
         />
         <input
           type="password"
           placeholder="Password"
-          className="p-2 my-2 w-full"
+          className="p-4 my-4 w-full bg-gray-700"
         />
-        <button className="p-2 my-4 bg-red-700 w-full">Sing In</button>
+        <button className="p-2 my-4 bg-red-700 w-full rounded-lg">
+          {isSignInForm ? "Sign In" : "Sign Up"}
+        </button>
+        <p className="py-4 cursor-pointer" onClick={toggleSignInForm}>
+          {isSignInForm
+            ? "New to Netflix? Sign Up Now"
+            : "Already a user? Sign In Now"}
+        </p>
       </form>
     </div>
   );
