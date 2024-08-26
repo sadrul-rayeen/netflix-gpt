@@ -1,11 +1,20 @@
 import React, { useRef, useState } from "react";
 import Header from "./Header";
-import { background_image_url } from "../utils/constant";
+import { background_image_url, profile_url } from "../utils/constant";
 import { formDataValidation } from "../utils/validate";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { auth } from "../utils/firebase";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/userSlice";
 
 const Login = () => {
   const [isSignInForm, setIsSignInFrom] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const dispatch = useDispatch();
 
   const email = useRef(null);
   const password = useRef(null);
@@ -14,13 +23,43 @@ const Login = () => {
   const toggleSignInForm = () => {
     setIsSignInFrom(!isSignInForm);
   };
-  const handleSubmit = (e) => {
-    const message = formDataValidation(
-      email.current.value,
-      password.current.value,
-      name?.current?.value
-    );
+
+  const handleSubmit = async (e) => {
+    const emailValue = email.current.value;
+    const passwordValue = password.current.value;
+    const nameValue = name?.current?.value;
+
+    const message = formDataValidation(emailValue, passwordValue, nameValue);
     setErrorMessage(message);
+
+    if (message) return;
+
+    try {
+      if (isSignInForm) {
+        const user = await signInWithEmailAndPassword(
+          auth,
+          emailValue,
+          passwordValue
+        );
+      } else {
+        const user = await createUserWithEmailAndPassword(
+          auth,
+          emailValue,
+          passwordValue
+        );
+        const updatUser = await updateProfile(auth.currentUser, {
+          displayName: nameValue,
+          photoURL: profile_url,
+        });
+        const { uid, email, displayName, photoURL } = auth.currentUser;
+        dispatch(addUser({ uid, email, displayName, photoURL }));
+      }
+    } catch (error) {
+      console.log(error);
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      setErrorMessage(errorCode + "-" + errorMessage);
+    }
   };
 
   return (
@@ -43,20 +82,20 @@ const Login = () => {
             ref={name}
             type="text"
             placeholder="Full Name"
-            className="p-4 my-4 w-full bg-gray-700"
+            className="p-4 my-4 w-full bg-gray-700 rounded-lg"
           />
         )}
         <input
           ref={email}
           type="text"
           placeholder="Email Address"
-          className="p-4 my-4 w-full bg-gray-700"
+          className="p-4 my-4 w-full bg-gray-700 rounded-lg"
         />
         <input
           ref={password}
           type="password"
           placeholder="Password"
-          className="p-4 my-4 w-full bg-gray-700"
+          className="p-4 my-4 w-full bg-gray-700 rounded-lg"
         />
         <p className="text-red-500 font-bold text-lg py-2">{errorMessage}</p>
         <button
