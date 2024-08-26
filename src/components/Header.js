@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser, removeUser } from "../utils/userSlice";
 import { logo_url } from "../utils/constant";
+import { gptActiveOrNot } from "../utils/gptSlice";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -35,11 +36,21 @@ const Header = () => {
       navigate("/error");
     }
   };
+
+  const handleIsGptActive = () => {
+    dispatch(gptActiveOrNot());
+  };
   return (
     <div className="absolute w-screen px-8 py-2 bg-gradient-to-b from-black z-10 flex justify-between">
       <img className="w-44" src={logo_url} alt="logo" />
       {user && (
         <div className="flex p-2">
+          <button
+            onClick={handleIsGptActive}
+            className="py-2 px-4 m-2 bg-purple-500 text-white rounded-lg"
+          >
+            GPT Search
+          </button>
           <img
             className="w-12 h-12 rounded-full m-2 cursor-pointer"
             src={user?.photoURL}
