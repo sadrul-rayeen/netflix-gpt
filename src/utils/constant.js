@@ -15,3 +15,5 @@ export const api_options = {
     Authorization: `Bearer ${api_access_token}`,
   },
 };
+
+export const image_cdn_url = "https://image.tmdb.org/t/p/w500";
