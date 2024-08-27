@@ -4,16 +4,17 @@ import { auth } from "../utils/firebase";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser, removeUser } from "../utils/userSlice";
-import { logo_url } from "../utils/constant";
+import { langauges, logo_url } from "../utils/constant";
 import { gptActiveOrNot } from "../utils/gptSlice";
+import { changeLanguage } from "../utils/configSlice";
 
 const Header = () => {
   const navigate = useNavigate();
   const user = useSelector((store) => store.user);
+  const showGptSearch = useSelector((store) => store.gpt.showGptSearch);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log("rendering");
     const unsubscribes = onAuthStateChanged(auth, (user) => {
       if (user) {
         const { uid, email, displayName, photoURL } = user;
@@ -40,16 +41,35 @@ const Header = () => {
   const handleIsGptActive = () => {
     dispatch(gptActiveOrNot());
   };
+
+  const languageChange = (e) => {
+    dispatch(changeLanguage(e.target.value));
+  };
   return (
     <div className="absolute w-screen px-8 py-2 bg-gradient-to-b from-black z-10 flex justify-between">
       <img className="w-44" src={logo_url} alt="logo" />
       {user && (
         <div className="flex p-2">
+          {showGptSearch && (
+            <select
+              className="rounded-lg m-2 p-2 bg-black text-white"
+              onChange={languageChange}
+            >
+              {langauges &&
+                langauges.map((d) => {
+                  return (
+                    <option key={d?.value} value={d?.value}>
+                      {d?.label}
+                    </option>
+                  );
+                })}
+            </select>
+          )}
           <button
             onClick={handleIsGptActive}
             className="py-2 px-4 m-2 bg-purple-500 text-white rounded-lg"
           >
-            GPT Search
+            {showGptSearch ? "Home Page" : "GPT Search"}
           </button>
           <img
             className="w-12 h-12 rounded-full m-2 cursor-pointer"
